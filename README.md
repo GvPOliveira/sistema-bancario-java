@@ -27,12 +27,14 @@ Todo o código fica em `src/main/java`, dividido em pacotes:
 |---|---|---|
 | `banco` | `Banco`, `Agencia` | esqueleto pronto |
 | `cliente` | `Cliente` (abstrata), `PessoaFisica`, `PessoaJuridica` | só `Cliente` existe |
-| `conta` | `ProcessavelMensalmente`, `Conta` (abstrata), `ContaCorrente`, `ContaPoupanca` | só a interface e `Conta` existem |
+| `conta` | `Conta` (abstrata), `ContaCorrente`, `ContaPoupanca` | só `Conta` existe |
 | `emprestimo` | empréstimos | a criar |
-| `simulacao` | simulador que gera clientes e avança os meses | a criar |
+| `simulacao` | `ProcessavelMensalmente`, simulador que gera clientes e avança os meses | só a interface existe |
 | `app` | `Main` e os menus do console | só o `Main` existe |
 
-Os pacotes `emprestimo` e `simulacao` ainda não aparecem no repositório porque o Git não versiona pasta vazia. Eles nascem quando a primeira classe for criada.
+O pacote `emprestimo` ainda não aparece no repositório porque o Git não versiona pasta vazia. Ele nasce quando a primeira classe for criada.
+
+A interface `ProcessavelMensalmente` fica em `simulacao` porque o contrato pertence a quem o usa, o Simulador. Contas e empréstimos é que se adaptam a ele.
 
 ## A base e o que cada um implementa
 
@@ -43,6 +45,12 @@ A base tem só estrutura e contratos, sem regra de negócio. Cada integrante imp
 - Atributos: `nome`, `documento` (CPF ou CNPJ), `rendaMensal` e `scoreCredito`.
 - `nome` e `documento` não mudam depois que o cliente é criado: entram pelo construtor e não têm setter.
 - `validarDocumento()` é abstrato: `PessoaFisica` valida CPF e `PessoaJuridica` valida CNPJ.
+- Cada subclasse chama `validarDocumento()` no final do próprio construtor, para que nunca exista um cliente com documento inválido. A chamada não fica no construtor de `Cliente` porque, ali, o método sobrescrito rodaria antes de a subclasse terminar de ser inicializada.
+
+### `Banco` e `Agencia`
+
+- O `Banco` guarda as agências, e a `Agencia` guarda as contas.
+- `getAgencias()` e `getContas()` devolvem listas **somente leitura**: dá para percorrer, mas um `add` ou `clear` lança exceção. Para incluir algo, use o método da própria classe (`adicionarAgencia` no `Banco` e, em breve, `abrirConta` na `Agencia`, que também gera o número da conta).
 
 ### `Conta` (abstrata)
 
@@ -88,18 +96,17 @@ Estas decisões valem para todo o código. Cada uma tem um motivo.
 
 ## Como contribuir
 
-A `main` é protegida: ninguém envia código direto para ela. Só a base inicial entrou sem Pull Request.
+A `main` é protegida: ninguém envia código direto para ela. Tudo entra por Pull Request, que o Gabriel Vinicius abre e mescla.
 
-Cada integrante trabalha numa branch com o próprio nome, em minúsculas e sem acento (por exemplo, `gabriel`).
+Cada integrante trabalha numa branch com o nome e o sobrenome juntos, sem acento e sem espaço (por exemplo, `GabrielVinicius`).
 
-1. Na primeira vez, crie a sua branch a partir da `main`: `git checkout main`, `git pull` e `git checkout -b seu-nome`.
+1. Na primeira vez, crie a sua branch a partir da `main`: `git checkout main`, `git pull` e `git checkout -b NomeSobrenome`.
 2. Faça commits pequenos, um por assunto.
-3. Antes de enviar, rode `mvn compile` e confirme que deu `BUILD SUCCESS`.
-4. Envie a branch (`git push -u origin seu-nome`) e abra um Pull Request no GitHub.
-5. Outra pessoa do grupo revisa e aprova. Com uma aprovação, o PR pode entrar na `main`.
-6. Depois que qualquer PR entrar na `main`, traga as novidades para a sua branch antes de continuar: `git pull origin main`.
+3. Antes de enviar, traga as novidades da `main` (`git pull origin main`), rode `mvn compile` e confirme que deu `BUILD SUCCESS`.
+4. Envie a branch (`git push -u origin NomeSobrenome`) e avise no grupo.
+5. O Gabriel Vinicius abre o Pull Request da sua branch para a `main`, confere o que mudou e faz o merge.
 
-Não espere terminar a sua parte inteira para abrir o PR. Abra um a cada pedaço que funciona (uma classe pronta, um método implementado): PRs pequenos são revisados mais rápido e geram menos conflito.
+Não espere terminar a sua parte inteira para avisar. Suba a cada pedaço que funciona (uma classe pronta, um método implementado): entregas pequenas são conferidas mais rápido e geram menos conflito.
 
 ### Mensagens de commit
 
