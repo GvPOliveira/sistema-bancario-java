@@ -3,6 +3,7 @@ package banco;
 import conta.Conta;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Agencia {
@@ -18,6 +19,6 @@ public class Agencia {
     }
 
     public List<Conta> getContas() {
-        return contas;
+        return Collections.unmodifiableList(contas);
     }
 }

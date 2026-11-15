@@ -1,6 +1,7 @@
 package banco;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Banco {
@@ -20,6 +21,6 @@ public class Banco {
     }
 
     public List<Agencia> getAgencias() {
-        return agencias;
+        return Collections.unmodifiableList(agencias);
     }
 }

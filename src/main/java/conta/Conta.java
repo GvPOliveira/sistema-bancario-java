@@ -1,6 +1,7 @@
 package conta;
 
 import cliente.Cliente;
+import simulacao.ProcessavelMensalmente;
 
 import java.math.BigDecimal;
 
